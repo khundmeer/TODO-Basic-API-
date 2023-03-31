@@ -1,8 +1,10 @@
+using MongoDB.Bson;
+
 namespace TODO
 {
     public class TODO_Model
     {
-        public int Id { get; set; }
+        public ObjectId Id { get; set; }
 
         public string Title { get; set; }
 

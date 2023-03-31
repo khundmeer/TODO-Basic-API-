@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
+using MongoDB.Driver;
+
 
 namespace TODO.Controllers
 {
@@ -9,32 +11,27 @@ namespace TODO.Controllers
     {
 
         private readonly ILogger<TODOController> _logger;
-
-        public TODOController(ILogger<TODOController> logger)
+        private readonly IConfiguration _configuration;
+        private readonly string mdb_conn_string;
+        private readonly MongoClient client;
+        private readonly IMongoDatabase database;
+        public TODOController(ILogger<TODOController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
+            mdb_conn_string = _configuration.GetValue<string>("MongoDbConnectionString");
+
+            client = new MongoClient(mdb_conn_string);
+            database = client.GetDatabase("SyedMongoDB");
         }
 
         //FIRST END POINT
         [HttpGet(Name = "GetTODOList")]
-        public IActionResult GetTODOList(int num_of_tasks_to_generate)
+        public async Task<IActionResult> GetTODOList()
         {
-            if (num_of_tasks_to_generate <= 0)
-            {
-                return StatusCode(402, "Invalid Input");
-            }
-            var list_of_tasks = new List<TODO_Model>();
+            var collection = database.GetCollection<TODO_Model>("TODO_List");
+            var list_of_tasks = await collection.Find(x => true).Skip(0).Limit(10).ToListAsync();
 
-            for (int i = 0; i < num_of_tasks_to_generate; i++)
-            {
-                list_of_tasks.Add(new TODO_Model()
-                {
-                    Id = i,
-                    Title = $"task {i}",
-                    Description = "This is your task to complete",
-                    Is_completed = false
-                });
-            }
 
             return Ok(list_of_tasks);
         }
@@ -45,16 +42,40 @@ namespace TODO.Controllers
         [ActionName("MakeTODOTask")]
         public IActionResult MakeTODOTask(TODO_Model given_task)
         {
-            if(given_task == null)
+            if (given_task == null)
             {
                 return StatusCode(402, "Null Task given.");
             }
 
-            TODO_Model created_task = new TODO_Model() {Id = given_task.Id, Title = given_task.Title,
-            Description = given_task.Description, Is_completed = given_task.Is_completed};
+           
 
-            return Ok(created_task);
+            var result = InsertMongodb(given_task).Result;
+            return Ok(result);
         }
-    
+
+        private async Task<TODO_Model> InsertMongodb(TODO_Model given_task) {
+
+            
+            var collection = database.GetCollection<TODO_Model>("TODO_List");
+
+            //var my_todo_1 = new TODO_Model {
+   
+            //    Title = given_task",
+            //    Description = "This is your task to complete",
+            //    Is_completed = false
+            //};
+            try
+            {
+                await collection.InsertOneAsync(given_task);
+                return given_task;
+            }
+            catch(Exception ex) {
+                var erro = ex.Message;
+            }
+            return given_task;
+
+
+        }
+
     }
 }
