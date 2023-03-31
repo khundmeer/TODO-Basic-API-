@@ -27,8 +27,16 @@ To create an API with basic CRUD operations against a database on the TODO Model
 Database:
 --
 
-ToDo:
-Configure MongoDB.
 
+Yesterday
+--connected mongodb to the api.
+--get all end point
+--post endpoint
+
+ToDo:
+--Replace and Update-->specific things and update. (done)
+
+
+Dependency Injection:
 --Creating an interface and implement.
---Replace and Update-->specific things and update.
+--create an interface: each controller should have an interface.
