@@ -31,32 +31,47 @@ namespace TODO.Implementation
             return Task.FromResult(result);
 
         }
-        public  UpdateResult Update(TODO_Update_Model update_request)
+        public UpdateResult Update(TODO_Update_Model update_request)
         {
 
             ObjectId update_req_obj_id = new ObjectId(update_request.Filter._id);
             var filter = Builders<TODO_Model>.Filter.Eq("_id", update_req_obj_id);
 
             var filtered_task = collection.Find(x => x.Id == update_req_obj_id).ToList<TODO_Model>();
-           
+
             if (filtered_task != null)
             {
                 var update = Builders<TODO_Model>.Update
                     .Set("Description", update_request.Description == "" ? filtered_task.FirstOrDefault().Description : update_request.Description)
                     .Set("Title", update_request.Title == "" ? filtered_task.FirstOrDefault().Title : update_request.Title)
                     .Set("Is_completed", update_request.Is_completed == null ? filtered_task.FirstOrDefault().Is_completed : update_request.Is_completed);
-                var result =  collection.UpdateOne(filter, update);
+                var result = collection.UpdateOne(filter, update);
                 return result;
             }
 
             return null;
         }
-        public async Task<List<TODO_Model>> Get_All()
+        public async Task<List<TODO_Response_Model>> Get_All()
         {
             var collection = database.GetCollection<TODO_Model>("TODO_List");
             var list_of_tasks = await collection.Find(x => true).Skip(0).Limit(10).ToListAsync();
 
-            return list_of_tasks;
+            var list = new List<TODO_Response_Model>();
+
+            foreach (var val in list_of_tasks)
+            {
+                var obj = new TODO_Response_Model();
+                obj.Id = val.Id.ToString();
+                obj.Description = val.Description;
+                obj.Title = val.Title;
+                obj.Is_completed = val.Is_completed;
+                list.Add(obj);
+
+
+            }
+
+
+            return list;
         }
         private async Task<TODO_Model> InsertMongodb(TODO_Model given_task)
         {

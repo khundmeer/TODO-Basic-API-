@@ -21,8 +21,6 @@ namespace TODO
         [Required(ErrorMessage = "_id is required")]
         public string _id { get; set; }
 
-       
-
     } 
     public class TODO_Update_Model
     {
@@ -33,6 +31,16 @@ namespace TODO
         public string Description { get; set; }
 
         public bool? Is_completed { get; set; }
+    }
+    public class TODO_Response_Model
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+
+        public string Description { get; set; }
+
+        public bool Is_completed { get; set; }
+
     }
 }
 

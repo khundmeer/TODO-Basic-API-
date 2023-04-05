@@ -42,6 +42,6 @@ Dependency Injection:
 --create an interface: each controller should have an interface. (done)
 
 Postman
---make a postman collection.
---make a docker image.
+--make a postman collection. (done)
+--make a docker image.(compatability issue)
 --react app.
