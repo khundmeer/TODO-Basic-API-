@@ -12,7 +12,8 @@ namespace TODO
 
         public string Description { get; set; }
 
-        public bool Is_completed { get; set; }
+        public string Status { get; set; }
+        public int List_index { get; set; }
 
     }
 
@@ -27,19 +28,18 @@ namespace TODO
         [Required(ErrorMessage = "Filter is required")]
         public Filter Filter { get; set; }
         public string Title { get; set; }
-
         public string Description { get; set; }
+        public string Status { get; set; }
+        public int? List_index { get; set; }
 
-        public bool? Is_completed { get; set; }
     }
     public class TODO_Response_Model
     {
         public string Id { get; set; }
         public string Title { get; set; }
-
         public string Description { get; set; }
-
-        public bool Is_completed { get; set; }
+        public string Status { get; set; }
+        public int? List_index { get; set; }
 
     }
 }

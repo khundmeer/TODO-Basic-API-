@@ -62,5 +62,25 @@ namespace TODO.Controllers
             }
 
         }
+
+
+
+        [HttpDelete]
+        [ActionName("DeleteTODOTask")]
+        public async Task<DeleteResult> Delete_Task(string Todo_Id)
+        {
+            return await _todoService.Delete_Task(Todo_Id);
+
+        }
+
+
+
+
+
+
+
+
+
+
     }
 }

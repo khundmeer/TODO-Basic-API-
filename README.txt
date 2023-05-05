@@ -44,4 +44,17 @@ Dependency Injection:
 Postman
 --make a postman collection. (done)
 --make a docker image.(compatability issue)
---react app.
+--react app. (done)
+
+--change our model to include todo, doing, done (done)
+
+--we need more endpoints to be implemented on the API side
+  --delete (done)
+
+--connect the end points to the react app. (react)
+	--insert
+	--update
+	--delete
+--drag and drop --> apis calls
+--show title instead of description
+--click display description

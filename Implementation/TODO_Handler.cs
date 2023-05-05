@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.ComponentModel.DataAnnotations;
 using TODO.Controllers;
@@ -44,7 +45,8 @@ namespace TODO.Implementation
                 var update = Builders<TODO_Model>.Update
                     .Set("Description", update_request.Description == "" ? filtered_task.FirstOrDefault().Description : update_request.Description)
                     .Set("Title", update_request.Title == "" ? filtered_task.FirstOrDefault().Title : update_request.Title)
-                    .Set("Is_completed", update_request.Is_completed == null ? filtered_task.FirstOrDefault().Is_completed : update_request.Is_completed);
+                    .Set("Status", update_request.Status== "" ? filtered_task.FirstOrDefault().Status : update_request.Status)
+                    .Set("List_index", update_request.List_index == null ? filtered_task.FirstOrDefault().List_index : update_request.List_index);
                 var result = collection.UpdateOne(filter, update);
                 return result;
             }
@@ -54,7 +56,7 @@ namespace TODO.Implementation
         public async Task<List<TODO_Response_Model>> Get_All()
         {
             var collection = database.GetCollection<TODO_Model>("TODO_List");
-            var list_of_tasks = await collection.Find(x => true).Skip(0).Limit(10).ToListAsync();
+            var list_of_tasks = await collection.Find(x => true).ToListAsync();
 
             var list = new List<TODO_Response_Model>();
 
@@ -64,7 +66,8 @@ namespace TODO.Implementation
                 obj.Id = val.Id.ToString();
                 obj.Description = val.Description;
                 obj.Title = val.Title;
-                obj.Is_completed = val.Is_completed;
+                obj.Status = val.Status;
+                obj.List_index = val.List_index;
                 list.Add(obj);
 
 
@@ -86,5 +89,21 @@ namespace TODO.Implementation
             }
             return given_task;
         }
+
+
+        public async Task<DeleteResult> Delete_Task(string Todo_Id)
+        {
+            var filter = Builders<TODO_Model>.Filter.Eq("_id", ObjectId.Parse(Todo_Id));
+
+            var result = await collection.DeleteOneAsync(filter);
+                
+                //({ _id: ObjectId(Todo_Id)});
+
+            return result;
+        }
+
+
+
+
     }
 }
