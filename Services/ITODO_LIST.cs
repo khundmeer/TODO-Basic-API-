@@ -10,5 +10,8 @@ namespace TODO.Services
         public Task<List<TODO_Response_Model>> Get_All();
 
         public Task<DeleteResult> Delete_Task(string Todo_Id);
+
+        public Task<TODO_Response_Model> Get_Todo_by_Id(string Todo_Id);
+
     }
 }

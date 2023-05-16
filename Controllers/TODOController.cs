@@ -9,7 +9,7 @@ using TODO.Services;
 namespace TODO.Controllers
 {
     [ApiController]//to show that this is an api we write
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class TODOController : ControllerBase
     {
 
@@ -26,6 +26,14 @@ namespace TODO.Controllers
         {
             return Ok(await _todoService.Get_All());
         }
+
+        [HttpGet(Name= "GetTodoById")]
+        public async Task<IActionResult> Get_Todo_by_Id(string Todo_Id)
+        {
+            return Ok(await _todoService.Get_Todo_by_Id(Todo_Id));
+        }
+
+
 
         [HttpPost]
         [ActionName("Insert")]
@@ -73,7 +81,7 @@ namespace TODO.Controllers
 
         }
 
-
+        
 
 
 

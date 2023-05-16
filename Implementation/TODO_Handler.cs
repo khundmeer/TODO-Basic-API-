@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Operations;
 using System.ComponentModel.DataAnnotations;
 using TODO.Controllers;
 using TODO.Services;
@@ -35,7 +36,7 @@ namespace TODO.Implementation
         public UpdateResult Update(TODO_Update_Model update_request)
         {
 
-            ObjectId update_req_obj_id = new ObjectId(update_request.Filter._id);
+            ObjectId update_req_obj_id = new ObjectId(update_request._id);
             var filter = Builders<TODO_Model>.Filter.Eq("_id", update_req_obj_id);
 
             var filtered_task = collection.Find(x => x.Id == update_req_obj_id).ToList<TODO_Model>();
@@ -45,8 +46,9 @@ namespace TODO.Implementation
                 var update = Builders<TODO_Model>.Update
                     .Set("Description", update_request.Description == "" ? filtered_task.FirstOrDefault().Description : update_request.Description)
                     .Set("Title", update_request.Title == "" ? filtered_task.FirstOrDefault().Title : update_request.Title)
-                    .Set("Status", update_request.Status== "" ? filtered_task.FirstOrDefault().Status : update_request.Status)
-                    .Set("List_index", update_request.List_index == null ? filtered_task.FirstOrDefault().List_index : update_request.List_index);
+                    .Set("Status", update_request.Status == "" ? filtered_task.FirstOrDefault().Status : update_request.Status)
+                    .Set("List_index", update_request.List_index == null ? filtered_task.FirstOrDefault().List_index : update_request.List_index)
+                    .Set("List_position", update_request.List_position == null ? filtered_task.FirstOrDefault().List_position : update_request.List_position);
                 var result = collection.UpdateOne(filter, update);
                 return result;
             }
@@ -68,6 +70,7 @@ namespace TODO.Implementation
                 obj.Title = val.Title;
                 obj.Status = val.Status;
                 obj.List_index = val.List_index;
+                obj.List_position = val.List_position;
                 list.Add(obj);
 
 
@@ -102,8 +105,29 @@ namespace TODO.Implementation
             return result;
         }
 
+        public async Task<TODO_Response_Model> Get_Todo_by_Id(string Todo_Id)
+        {
+            var collection = database.GetCollection<TODO_Model>("TODO_List");
 
+            ObjectId _id = new ObjectId(Todo_Id);
 
+            var filter = Builders<TODO_Model>.Filter.Eq("_id", _id);
 
+            var result = collection.Find(filter).FirstOrDefault();
+
+            TODO_Response_Model ret_value = new TODO_Response_Model();
+            ret_value.Id = result.Id.ToString();
+            ret_value.Status = result.Status;
+            ret_value.Title = result.Title;
+            ret_value.Description = result.Description;
+            ret_value.List_index = result.List_index;
+            ret_value.List_position = result.List_position;
+
+            return ret_value;
+        }
+
+      
+
+        
     }
 }
