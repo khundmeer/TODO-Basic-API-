@@ -29,14 +29,32 @@ Database:
 
 
 Yesterday
---connected mongodb to the api.
---get all end point
---post endpoint
+--connected mongodb to the api. (done)
+--get all end point (done)
+--post endpoint (done)
 
 ToDo:
 --Replace and Update-->specific things and update. (done)
 
 
 Dependency Injection:
---Creating an interface and implement.
---create an interface: each controller should have an interface.
+--Creating an interface and implement. (done)
+--create an interface: each controller should have an interface. (done)
+
+Postman
+--make a postman collection. (done)
+--make a docker image.(compatability issue)
+--react app. (done)
+
+--change our model to include todo, doing, done (done)
+
+--we need more endpoints to be implemented on the API side
+  --delete (done)
+
+--connect the end points to the react app. (react)
+	--insert
+	--update
+	--delete
+--drag and drop --> apis calls
+--show title instead of description
+--click display description
