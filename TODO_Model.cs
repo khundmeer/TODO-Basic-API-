@@ -46,4 +46,14 @@ namespace TODO
         public int List_position { get; set; }
     }
 
+    public class DragAndDropModel { 
+        public string droppableId { get; set; }
+        public int index { get; set; }
+    }
+
+    public class DragAndDropRrequest {
+       public TODO_Update_Model UpdateRequest { get; set; }
+        public DragAndDropModel source { get; set; }
+        public DragAndDropModel Designation { get; set; }
+    }
 }

@@ -71,7 +71,27 @@ namespace TODO.Controllers
 
         }
 
+        [HttpPut]
+        [ActionName("DragAndDrop")]
+        public async Task<IActionResult> DragAndDrop(DragAndDropRrequest dragAndDropRequest)
+        {
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(dragAndDropRequest.UpdateRequest);
+            bool isValid = Validator.TryValidateObject(dragAndDropRequest.UpdateRequest, context, results, true);
 
+            if (!isValid)
+            {
+                return StatusCode(402, "Null is passed for update_request or one of the" +
+                    "required elements.");
+            }
+            else
+            {
+
+                var res = _todoService.DragAndDrop(dragAndDropRequest.UpdateRequest, dragAndDropRequest.source, dragAndDropRequest.Designation);
+                return Ok(res);
+            }
+
+        }
 
         [HttpDelete]
         [ActionName("DeleteTODOTask")]
