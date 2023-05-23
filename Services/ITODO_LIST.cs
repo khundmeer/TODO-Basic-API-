@@ -13,5 +13,7 @@ namespace TODO.Services
 
         public Task<TODO_Response_Model> Get_Todo_by_Id(string Todo_Id);
 
+        public UpdateResult DragAndDrop(TODO_Update_Model update_request, DragAndDropModel source, DragAndDropModel designation);
+
     }
 }

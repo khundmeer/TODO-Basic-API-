@@ -27,10 +27,16 @@ namespace TODO.Implementation
             database = client.GetDatabase("SyedMongoDB");
             collection = database.GetCollection<TODO_Model>("TODO_List");
         }
-        public Task<TODO_Model> Insert(TODO_Model given_task)
+        public async Task<TODO_Model> Insert(TODO_Model given_task)
         {
+            //get count of items based a certain list index.
+            var filter = Builders<TODO_Model>.Filter.Eq("List_index", given_task.List_index);
+
+            var count = await collection.CountDocumentsAsync(filter);
+            given_task.List_position = (int)count;
+
             var result = InsertMongodb(given_task).Result;
-            return Task.FromResult(result);
+            return (result);
 
         }
         public UpdateResult Update(TODO_Update_Model update_request)
@@ -126,8 +132,72 @@ namespace TODO.Implementation
             return ret_value;
         }
 
-      
+        public UpdateResult DragAndDrop(TODO_Update_Model update_request, DragAndDropModel source, DragAndDropModel destination)
+        {
 
-        
+
+            var sss = "";
+
+
+            //update the list position of objects in the destination list index >
+
+            //list index
+
+
+            #region "Desgination List Postion Increment By 1"
+            var listIndexFilter = Builders<TODO_Model>.Filter.Eq("List_index", destination.droppableId);
+            var listPositionFilter = Builders<TODO_Model>.Filter.Gte("List_position", destination.index);
+
+            var combinedFilter = Builders<TODO_Model>.Filter.And(listIndexFilter, listPositionFilter);
+
+            // Create an update definition to increment the field by 1
+            var update = Builders<TODO_Model>.Update.Inc("List_position", 1);
+
+            // Perform the update
+            var result = collection.UpdateMany(combinedFilter, update);
+            #endregion
+
+            //update the list position of objects in the source list index >
+
+
+
+
+            
+
+            #region "Move task from once coloumn to Other column"
+            //update the object's list index and list position ==> destination index and position
+
+            ObjectId update_req_obj_id = new ObjectId(update_request._id);
+            var filter = Builders<TODO_Model>.Filter.Eq("_id", update_req_obj_id);
+
+            // var filtered_task = collection.Find(x => x.Id == update_req_obj_id).ToList<TODO_Model>();
+
+            int listindex = 0;
+            int.TryParse(destination.droppableId, out listindex);
+            var update_ChangeStatus = Builders<TODO_Model>.Update
+                .Set("Status", update_request.Status)
+                .Set("List_index", update_request.List_index = listindex)
+                .Set("List_position", update_request.List_position = destination.index);
+            var Updatedresult = collection.UpdateOne(filter, update_ChangeStatus);
+
+            #endregion
+
+            #region "Source List Postion decrement By 1"
+             listIndexFilter = Builders<TODO_Model>.Filter.Eq("List_index", source.droppableId);
+             listPositionFilter = Builders<TODO_Model>.Filter.Gte("List_position", source.index);
+
+             combinedFilter = Builders<TODO_Model>.Filter.And(listIndexFilter, listPositionFilter);
+
+            // Create an update definition to increment the field by 1
+             update = Builders<TODO_Model>.Update.Inc("List_position", -1);
+
+            // Perform the update
+             result = collection.UpdateMany(combinedFilter, update);
+            #endregion
+
+            return result;
+           
+
+        }
     }
 }
